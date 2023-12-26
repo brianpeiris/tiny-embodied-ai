@@ -275,26 +275,25 @@ const PREAMBLE = `
     Llama can complete the goal with the command done();.
     When Llama is done, Llama must respond with the command done();.
 
-    Llama must provide a short explanation of its commands before providing the commands on a new line.
+    Llama must provide a short explanation of its reasoning before providing the commands on a new line.
 
     <example>
     Entry: 0
     Goal: Get within 20 units of the east wall.
     State: Llama is at (450, 30). Llama's heading is 0 degrees. Llama is facing the north wall. The north wall is 30 units away.
-    Reasoning: Llama knows it can turn and move. Llama should turn and move slowly. Llama is 50 units away from the east wall. Llama will turn clockwise to face the east wall.
+    Reasoning: Llama is 50 units away from the east wall. Llama will turn clockwise to face the east wall.
     Command: turn(90);
 
     Entry: 1
     Goal: Get within 20 units of the east wall.
     State: Llama is at (450, 30). Llama's heading is 90 degrees. Llama is facing the east wall. The east wall is 50 units away.
-    Reasoning: Llama knows it can turn and move. Llama should turn and move slowly. Llama is 50 units away from the east wall. Llama will move 35 units foward.
+    Reasoning: Llama is 50 units away from the east wall. Llama will move 35 units foward.
     Command: move(35);
-    </example>
 
     Entry: 2
     Goal: Get within 20 units of the east wall.
     State: Llama is at (485, 30). Llama's heading is 90 degrees. Llama is facing the east wall. The east wall is 15 units away.
-    Reasoning: Llama knows it can turn and move. Llama should turn and move slowly. Llama is 15 units away from the east wall. This is within the 20 unit goal. Llama has completed the goal.
+    Reasoning: Llama is 15 units away from the east wall. This is within the 20 unit goal. Llama has completed the goal.
     Command: done();
     </example>
 
@@ -320,7 +319,7 @@ function getConversation(conversation) {
             Entry: ${i}
             Goal: ${entry.goal}
             State: ${entry.botState}
-            Explanation: ${entry.explanation || ""}
+            Reasoning: ${entry.reasoning || ""}
             ${entry.command ? `Command: ${entry.command}` : ""}
           `,
         )
@@ -352,9 +351,9 @@ async function runAi() {
     const response = await fetchResponse(prompt);
 
     try {
-      const explanation = response.split("\n")[0];
+      const reasoning = response.split("\n")[0];
       const command = response.split("\n")[1].split(":")[1].trim();
-      state.conversation.push({ botState, goal, explanation, command });
+      state.conversation.push({ botState, goal, reasoning, command });
 
       chat.textContent = getConversation(state.conversation);
       chat.scrollTop = chat.scrollTopMax;
