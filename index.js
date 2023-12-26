@@ -29,6 +29,8 @@ const WALLS = [
   { name: "east", x: SIZE, y: HSIZE, w: 10, h: SIZE },
 ];
 
+const SLEEP = 100;
+
 const state = {
   firstFrame: true,
   bot: {
@@ -40,6 +42,7 @@ const state = {
   },
   things: [],
   conversation: [],
+  runAiEnabled: true,
 };
 
 function setup() {
@@ -195,9 +198,9 @@ function draw() {
     turn(keyIsDown(SHIFT) ? BOT_TURN_SLOW : BOT_TURN_NORMAL);
   }
   if (keyIsDown(KEY_W)) {
-    move(keyIsDown(SHIFT) ? 0.1 : 0.2);
+    move(keyIsDown(SHIFT) ? 1 : 2);
   } else if (keyIsDown(KEY_S)) {
-    move(keyIsDown(SHIFT) ? -0.1 : -0.2);
+    move(keyIsDown(SHIFT) ? -1 : -2);
   }
 }
 
@@ -219,17 +222,16 @@ function turn(degrees) {
 function move(steps) {
   state.bot.x = min(
     SIZE - MARGIN,
-    max(MARGIN, state.bot.x + steps * 10 * cos(state.bot.r)),
+    max(MARGIN, state.bot.x + steps * cos(state.bot.r)),
   );
   state.bot.y = min(
     SIZE - MARGIN,
-    max(MARGIN, state.bot.y + steps * 10 * sin(state.bot.r)),
+    max(MARGIN, state.bot.y + steps * sin(state.bot.r)),
   );
 }
 
-let runAiEnabled = true;
 function done() {
-  runAiEnabled = false;
+  state.runAiEnabled = false;
 }
 
 const PREAMBLE = `
@@ -250,9 +252,11 @@ const PREAMBLE = `
     Llama is very good understanding the Goal.
     Llama is very good at knowing when it has completed the Goal.
     Llama uses the shortest set of commands to complete the Goal.
+    Llama can move in any increment, for example 10 steps, 17 steps, or 33 steps.
+    Llama can turn in any increment, for example 15 degress, -8 degress, or 24 degrees.
     Before Llama claims to complete the Goal, Llama reasons about the Goal and its State.
     Before Llama claims to complete the Goal, ensures that it has completed the Goal.
-    When Llama is stuck, it tries new commands.
+    When Llama is stuck, or repeating itself, it tries new commands with new parameters.
     Llama must respond with commands in correct javascript syntax.
     Llama must separate multiple commands with a semicolon.
     Llama must not respond with markdown.
@@ -269,7 +273,6 @@ const PREAMBLE = `
     For example, turn(-12); will turn Llama 12 degrees counter-clockwise.
 
     Llama can complete the goal with the command done();.
-    For example, done(); will complete the goal with the message "I did it!".
     When Llama is done, Llama must respond with the command done();.
 
     Llama must provide a short explanation of its commands before providing the commands on a new line.
@@ -278,8 +281,21 @@ const PREAMBLE = `
     Entry: 0
     Goal: Get within 20 units of the east wall.
     State: Llama is at (450, 30). Llama's heading is 0 degrees. Llama is facing the north wall. The north wall is 30 units away.
-    Reasoning: Llama knows it can turn and move. Llama should turn and move slowly. Llama is 50 units away from the east wall. Llama will turn clockwise to face the north wall.
+    Reasoning: Llama knows it can turn and move. Llama should turn and move slowly. Llama is 50 units away from the east wall. Llama will turn clockwise to face the east wall.
     Command: turn(90);
+
+    Entry: 1
+    Goal: Get within 20 units of the east wall.
+    State: Llama is at (450, 30). Llama's heading is 90 degrees. Llama is facing the east wall. The east wall is 50 units away.
+    Reasoning: Llama knows it can turn and move. Llama should turn and move slowly. Llama is 50 units away from the east wall. Llama will move 35 units foward.
+    Command: move(35);
+    </example>
+
+    Entry: 2
+    Goal: Get within 20 units of the east wall.
+    State: Llama is at (485, 30). Llama's heading is 90 degrees. Llama is facing the east wall. The east wall is 15 units away.
+    Reasoning: Llama knows it can turn and move. Llama should turn and move slowly. Llama is 15 units away from the east wall. This is within the 20 unit goal. Llama has completed the goal.
+    Command: done();
     </example>
 
     The task begins with the following conversation:
@@ -318,31 +334,38 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const SLEEP = 500;
 async function runAi() {
-  const goal = `Get within 20 units of the south wall.`;
-  while (runAiEnabled) {
+  const goal = `Get within 20 units of the north wall.`;
+
+  while (state.runAiEnabled) {
     const botState = getNiceBotState();
     const newConversation = [...state.conversation, { botState, goal }];
+
     chat.textContent = getConversation(newConversation);
     chat.scrollTop = chat.scrollTopMax;
     await sleep(SLEEP);
+
     const prompt = getConversation([
       ...state.conversation.slice(-2),
       { botState, goal },
     ]);
     const response = await fetchResponse(prompt);
+
     try {
       const explanation = response.split("\n")[0];
       const command = response.split("\n")[1].split(":")[1].trim();
       state.conversation.push({ botState, goal, explanation, command });
+
       chat.textContent = getConversation(state.conversation);
       chat.scrollTop = chat.scrollTopMax;
+
       await sleep(SLEEP);
-      new Function("turn", "move", command)(turn, move);
+
+      new Function("turn", "move", "done", command)(turn, move, done);
     } catch (e) {
       console.error(e.message);
     }
+
     await sleep(SLEEP);
   }
 }

@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "concurrently npm:start:*",
+    "start:llamafile": "exec ${LLAMAFILE:-./mistral-7b-instruct-v0.1-Q4_K_M-server.llamafile} --nobrowser -ngl 35 -c 2048",
+    "start:browser-sync": "browser-sync start -s -w --no-open --no-notify --no-ghost-mode --ignore llama.log"
+  },
+  "dependencies": {
+    "browser-sync": "^2.29.3",
+    "concurrently": "^8.2.2"
+  }
+}
