@@ -3,7 +3,7 @@
 This was an experiment in embodying a large language model in a simple virtual simulation, and giving it a task to complete.
 The goal was to test LLM's reasoning capabilities. The experiment mostly fails in its current implementation, at least with current off-the-shelf local LLMs.
 
-![screenshot](screenshot.png)
+![demo](demo.mp4)
 
 ## Instructions
 
@@ -109,14 +109,6 @@ State: Llama is at (450, 30). Llama's heading is 90 degrees.
 Llama is facing the east wall. The east wall is 50 units away.
 Reasoning: Llama is 50 units away from the east wall. Llama will move 35 units foward.
 Command: move(35);
-
-Entry: 2
-Goal: Get within 20 units of the east wall.
-State: Llama is at (485, 30). Llama's heading is 90 degrees.
-Llama is facing the east wall. The east wall is 15 units away.
-Reasoning: Llama is 15 units away from the east wall.
-This is within the 20 unit goal. Llama has completed the goal.
-Command: done();
 </example>
 
 The task begins with the following conversation:
@@ -146,12 +138,15 @@ We could speculate about why the LLMs fail at this task:
 - LLMs are just inherently bad at this type of spatial reasoning task. Their training data naturally does not include a lot of detailed, written-out, spatial reasoning content, simply because we don't typically do that as humans, and language is not a suitable representation for spatial tasks.
 - We're asking too much of the LLMs. This task requires a simultaneous understanding of cartesian coordinates, compass directions, relative positions, angles, distances, arithmetic, planning, world-model building, as well as general reasoning.
 - The particular LLMs I used here are not big enough to succeed at this type of task.
+- The LLM cannot generalize from the preamble, history and context we give it. It needs far more context to succeed.
 - The LLM parameters (temperature, sampling, etc.) need to be tweaked appropriately.
 - The prompt is poorly engineered. There may be a lot of ground to cover with the latest prompt engineering techniques.
 
 ## Future directions
 
-Following the above speculation, we could spend time trying variations of this implementation. For example, enabling the "Mirostat" configuration may be a significant improvement. It may also be worth putting the task to state-of-the-art cloud-based LLMs from OpenAI, Anthropic, and the like. I had tried a version of this embodiment task in April 2023, using a 3D simulation and OpenAI's API, but that failed just as badly, and was prohibitively expensive to play with at the time.
+Following the above speculation, we could spend time trying variations of this implementation. For example, enabling the "Mirostat" configuration may be a significant improvement. Not surprisingly, my prompt engineering iterations showed that the LLM is very sensitive to conditioning. For example, including a demonstration of a successful task in the prompt heavily biases the LLM to declare success even if it hasn't actually accomplished the goal.
+
+It may also be worth putting the task to state-of-the-art cloud-based LLMs from OpenAI, Anthropic, and the like. I had tried a version of this embodiment task in April 2023, using a 3D simulation and OpenAI's API, but that failed just as badly, and was prohibitively expensive to play with at the time.
 
 This task may need a different approach. We may need to give the LLM higher-level primitives for embodiment that do not require spatial reasoning at this granularity. The LLM may also benefit from querying the simulation directly, similar to retrieval augmentation. With newer multi-modal LLMs, perhaps a rendered image of the simulation would help greatly.
 

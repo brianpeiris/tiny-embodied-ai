@@ -289,12 +289,6 @@ const PREAMBLE = `
     State: Llama is at (450, 30). Llama's heading is 90 degrees. Llama is facing the east wall. The east wall is 50 units away.
     Reasoning: Llama is 50 units away from the east wall. Llama will move 35 units foward.
     Command: move(35);
-
-    Entry: 2
-    Goal: Get within 20 units of the east wall.
-    State: Llama is at (485, 30). Llama's heading is 90 degrees. Llama is facing the east wall. The east wall is 15 units away.
-    Reasoning: Llama is 15 units away from the east wall. This is within the 20 unit goal. Llama has completed the goal.
-    Command: done();
     </example>
 
     The task begins with the following conversation:
