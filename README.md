@@ -18,13 +18,13 @@ https://github.com/brianpeiris/tiny-embodied-ai/assets/79419/68416a82-1e1f-49ed-
 
 The simulated environment consists of a "bot" that is able to move around a square room. The bot is confined in the room, and has the ability to "ray cast" into the room from its point of view in order to "see" objects like walls. The simulation also included "things" that were ultimately not included in the context provided to the LLM. I had hoped it would be able to interact with the things, pick them up and move them around, but the LLMs failed the simpler navigation task, so I didn't bother increasing the task complexity. The LLM context just includes the walls of the room.
 
-The simluation was built with [p5.js](https://p5js.org) (more specifically, [q5.js](https://quinton-ashley.github.io/q5.js/), which is a faster drop-in implementation of p5). Ray casting was implemented with [p5.collide2D](https://github.com/bmoren/p5.collide2D).
+The simulation was built with [p5.js](https://p5js.org) (more specifically, [q5.js](https://quinton-ashley.github.io/q5.js/), which is a faster drop-in implementation of p5). Ray casting was implemented with [p5.collide2D](https://github.com/bmoren/p5.collide2D).
 
 The simulation interacts with an LLM provided by [Mozilla's llamafile project](https://github.com/Mozilla-Ocho/llamafile), which is based on [llama.cpp](https://github.com/ggerganov/llama.cpp), specifically I tried LLaVA 1.5 and Mistral-7B-Instruct. Mistral performed better. I was unable to run Mixtral-8x7B-Instruct on my hardware. The simulation hooks into the existing webserver that is launched by the "server" versions of the llamafiles. The LLM server simply provides completions to the prompt provided.
 
 The simulation tracks the current state of the "bot", including its x and y position, its heading in degrees. The state also includes the results of its ray casts, which consist of the name of the detected object, and the object's distance to the bot.
 
-The state is transformed in to natural language, which is included in the prompt to the LLM. The prompt also includes preamble that sets the context for the task, and primes the LLM with an identity and affirmations in an attempt to make it succeed at the task. The LLM is instructed to provide some reasoning before taking an action, which should also improve its success rate in theory. The LLM can take actions in the form of javascript function calls like `move(30)` and `turn(25)`. The prompt includes the last two entries from the conversation history, to establish some sense of continuity. The web UI shows the full history. The goal is repeated with every entry in the history. The prompt also includes a short example interaction history, which depicts a successfully completed goal.
+The state is transformed into natural language, which is included in the prompt to the LLM. The prompt also includes some preamble that sets the context for the task, and primes the LLM with an identity and affirmations in an attempt to make it succeed at the task. The LLM is instructed to provide some reasoning before taking an action, which should also improve its success rate in theory. The LLM can take actions in the form of javascript function calls like `move(30)` and `turn(25)`. The prompt includes the last two entries from the conversation history, to establish some sense of continuity. The web UI shows the full history. The goal is repeated with every entry in the history. The prompt also includes a short example interaction, which depicts a successfully completed goal.
 
 The final part of the prompt looks something like this:
 
@@ -43,7 +43,7 @@ A completion would look something like this:
 Goal: Get within 20 units of the north wall.
 State: Llama is at (250, 250). Llama's heading is 90 degrees.
 Llama is facing the east wall. The east wall is 245 units away.
-Reasoning: Llama is 245 units away from the north wall. Llama will move 38 units foward.
+Reasoning: Llama is 245 units away from the north wall. Llama will move 38 units forward.
 Command: move(38);
 ```
 
@@ -67,11 +67,11 @@ Llama is very good at planning.
 Llama is very good at explaining its reasoning.
 Llama moves slowly and deliberately.
 Llama turns slowly and deliberately.
-Llama is very good understanding the Goal.
+Llama is very good at understanding the Goal.
 Llama is very good at knowing when it has completed the Goal.
 Llama uses the shortest set of commands to complete the Goal.
 Llama can move in any increment, for example 10 steps, 17 steps, or 33 steps.
-Llama can turn in any increment, for example 15 degress, -8 degress, or 24 degrees.
+Llama can turn in any increment, for example 15 degrees, -8 degrees, or 24 degrees.
 Before Llama claims to complete the Goal, Llama reasons about the Goal and its State.
 Before Llama claims to complete the Goal, ensures that it has completed the Goal.
 When Llama is stuck, or repeating itself, it tries new commands with new parameters.
@@ -107,7 +107,7 @@ Entry: 1
 Goal: Get within 20 units of the east wall.
 State: Llama is at (450, 30). Llama's heading is 90 degrees.
 Llama is facing the east wall. The east wall is 50 units away.
-Reasoning: Llama is 50 units away from the east wall. Llama will move 35 units foward.
+Reasoning: Llama is 50 units away from the east wall. Llama will move 35 units forward.
 Command: move(35);
 </example>
 
