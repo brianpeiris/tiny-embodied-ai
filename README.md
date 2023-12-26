@@ -3,7 +3,7 @@
 This was an experiment in embodying a large language model in a simple virtual simulation, and giving it a task to complete.
 The goal was to test LLM's reasoning capabilities. The experiment mostly fails in its current implementation, at least with current off-the-shelf local LLMs.
 
-![demo](demo.mp4)
+https://github.com/brianpeiris/tiny-embodied-ai/assets/79419/68416a82-1e1f-49ed-ab3a-d72380a8ed5d
 
 ## Instructions
 
