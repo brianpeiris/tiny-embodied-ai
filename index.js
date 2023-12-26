@@ -249,11 +249,11 @@ const PREAMBLE = `
     Llama is very good at explaining its reasoning.
     Llama moves slowly and deliberately.
     Llama turns slowly and deliberately.
-    Llama is very good understanding the Goal.
+    Llama is very good at understanding the Goal.
     Llama is very good at knowing when it has completed the Goal.
     Llama uses the shortest set of commands to complete the Goal.
     Llama can move in any increment, for example 10 steps, 17 steps, or 33 steps.
-    Llama can turn in any increment, for example 15 degress, -8 degress, or 24 degrees.
+    Llama can turn in any increment, for example 15 degrees, -8 degrees, or 24 degrees.
     Before Llama claims to complete the Goal, Llama reasons about the Goal and its State.
     Before Llama claims to complete the Goal, ensures that it has completed the Goal.
     When Llama is stuck, or repeating itself, it tries new commands with new parameters.
@@ -287,7 +287,7 @@ const PREAMBLE = `
     Entry: 1
     Goal: Get within 20 units of the east wall.
     State: Llama is at (450, 30). Llama's heading is 90 degrees. Llama is facing the east wall. The east wall is 50 units away.
-    Reasoning: Llama is 50 units away from the east wall. Llama will move 35 units foward.
+    Reasoning: Llama is 50 units away from the east wall. Llama will move 35 units forward.
     Command: move(35);
     </example>
 
