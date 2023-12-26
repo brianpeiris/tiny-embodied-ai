@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        position: relative;
+        background: #222;
+        display: flex;
+        justify-content: center;
+        font-family: sans-serif;
+        color: #fff;
+        margin: 0;
+        padding: 20px;
+        max-height: calc(min(1000px, 100vh));
+        box-sizing: border-box;
+      }
+      canvas {
+        background: #000;
+      }
+      #info {
+        white-space: pre;
+        font-family: monospace;
+      }
+      #container {
+        width: 1000px;
+        display: grid;
+        grid-template-columns: 500px 500px;
+        gap: 20px;
+      }
+      #left {
+        width: 500px;
+      }
+      #chat {
+        font-family: monospace;
+        white-space: pre-wrap;
+        overflow: auto;
+        scroll-behavior: smooth;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="left">
+        <div id="canvasContainer"></div>
+        <div id="info"></div>
+      </div>
+      <div id="chat"></div>
+    </div>
+    <script src="https://unpkg.com/q5@1.9.0/q5.min.js"></script>
+    <script src="https://unpkg.com/p5.collide2d@0.7.3/p5.collide2d.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
